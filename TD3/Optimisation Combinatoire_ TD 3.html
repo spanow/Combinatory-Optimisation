@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://fabien.viger.free.fr/oc/td3/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Optimisation Combinatoire: TD 3</title>
+  <style type="text/css">
+    .blue { color: #0000ff }
+    .xslt { color: #116611 }
+    .cc { color: #116611 }
+    .html { color: #882222 }
+    .xml { color: #116611 }
+    .red { color: #ff0000 }
+    .orange { color: #ff8800 }
+    .pink { color: #ff00ff }
+    .grey { color: #555555 }
+    .hidden { color: #ffffff }
+    .bigsep { width: 50px }
+    .verticalline { border-left: solid #000000; }
+    .framed { border: solid #000000; }
+    .footnote { }
+    pre { color: #116611 }
+    tt { color: #116611 }
+  </style>
+  <!-- Google Analytics -->
+  <script type="text/javascript" async="" src="./Optimisation Combinatoire_ TD 3_files/ga.js.download"></script><script type="text/javascript" async="" src="./Optimisation Combinatoire_ TD 3_files/ga.js.download"></script>
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-20097933-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+  <!-- Syntax highlighting -->
+  <link type="text/css" rel="stylesheet" href="./Optimisation Combinatoire_ TD 3_files/googlecode.css">
+  <script type="text/javascript" src="./Optimisation Combinatoire_ TD 3_files/highlight.pack.js.download"></script>
+  <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+<style type="text/css">.backpack.dropzone {
+  font-family: 'SF UI Display', 'Segoe UI';
+  font-size: 15px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 250px;
+  height: 150px;
+  font-weight: lighter;
+  color: white;
+  will-change: right;
+  z-index: 2147483647;
+  bottom: 20%;
+  background: #333;
+  position: fixed;
+  user-select: none;
+  transition: left .5s, right .5s;
+  right: 0px; }
+  .backpack.dropzone .animation {
+    height: 80px;
+    width: 250px;
+    background: url("chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/assets/backpack/dropzone/hoverstate.png") left center; }
+  .backpack.dropzone .title::before {
+    content: 'Save to'; }
+  .backpack.dropzone.closed {
+    right: -250px; }
+  .backpack.dropzone.hover .animation {
+    animation: sxt-play-anim-hover 0.91s steps(21);
+    animation-fill-mode: forwards;
+    background: url("chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/assets/backpack/dropzone/hoverstate.png") left center; }
+
+@keyframes sxt-play-anim-hover {
+  from {
+    background-position: 0px; }
+  to {
+    background-position: -5250px; } }
+  .backpack.dropzone.saving .title::before {
+    content: 'Saving to'; }
+  .backpack.dropzone.saving .animation {
+    background: url("chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/assets/backpack/dropzone/saving_loop.png") left center;
+    animation: sxt-play-anim-saving steps(59) 2.46s infinite; }
+
+@keyframes sxt-play-anim-saving {
+  100% {
+    background-position: -14750px; } }
+  .backpack.dropzone.saved .title::before {
+    content: 'Saved to'; }
+  .backpack.dropzone.saved .animation {
+    background: url("chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/assets/backpack/dropzone/saved.png") left center;
+    animation: sxt-play-anim-saved steps(20) 0.83s forwards; }
+
+@keyframes sxt-play-anim-saved {
+  100% {
+    background-position: -5000px; } }
+</style></head>
+<body>
+<h2>TD 3: Arbres. Programmation Dynamique. DAGs.</h2>
+
+<h3>Rappels</h3>
+<ul>
+  <li><a href="http://fabien.viger.free.fr/oc/rendu.html">Procédure de rendu</a></li>
+  <li> Deadline de rendu : <b>ce soir</b> (Mercredi 27 janvier) à <b>23:59:59</b></li>
+  <li> Pour exécuter les tests : téléchargez <a href="http://fabien.viger.free.fr/oc/td3/test.tar.gz" download=""><tt>test.tar.gz</tt></a> et décompressez-le dans votre répertoire de travail </li>
+  <li>Vous pouvez me <a href="https://meet.google.com/pre-jkrc-xtx">posez une question par video/audio</a> (partage d'écran possible)</li>
+  <li>Vous pouvez écrire vos questions sur le <a href="https://docs.google.com/document/d/1NYmSrib-8ILqDFwA5kyqsVArBGFmD0WsBP4zFXDZYjw/edit?usp=sharing">document partagé</a>, que je surveillerais pendant le TD</li>
+</ul>
+
+
+<hr>
+<h3>Exercice 1: Arbres</h3>
+<ol>
+  <li>
+    <b>Implémentez</b> dans un fichier <tt>tree.1.cc</tt> la fonction <tt>ParentVectorToChildVector(...)</tt> décrite dans le fichier <a href="http://fabien.viger.free.fr/oc/td3/tree.1.h" download="">tree.1.h</a>:
+    <pre><code class="c++ hljs cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">ifndef</span> __TREE_1_H</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> __TREE_1_H</span>
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+
+<span class="hljs-comment">// Entrée: le tableau de parents d'un arbre enraciné (ou d'une forêt d'arbres</span>
+<span class="hljs-comment">// enracinés): parent[i] = -1 si le noeud i est une racine, et sinon c'est</span>
+<span class="hljs-comment">// le noeud parent de i dans l'arbre qui contient i.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Sortie: le tableau des liste d'enfants: l'élément i du tableau de sortie</span>
+<span class="hljs-comment">// est un vector&lt;int&gt; listant tous les enfants du noeud i (il pourra etre</span>
+<span class="hljs-comment">// vide si i n'a pas d'enfants), dans un ordre quelconque.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Exemple:</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">//    .3.     vector&lt;int&gt; parents = [3, 2, 3, -1, 3, 1]  // size()=6 = num nodes</span>
+<span class="hljs-comment">//   .'|'.</span>
+<span class="hljs-comment">//  2  0  4   vector&lt;vector&lt;int&gt;&gt; enfants = [ [],</span>
+<span class="hljs-comment">//  |                                         [5],</span>
+<span class="hljs-comment">//  1                                         [1],</span>
+<span class="hljs-comment">//  |                                         [2, 0, 4],</span>
+<span class="hljs-comment">//  5                                         [],</span>
+<span class="hljs-comment">//                                            [] ]</span>
+<span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt; ParentVectorToChildrenVector(<span class="hljs-keyword">const</span> <span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&amp; parent);
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">endif</span>  <span class="hljs-comment">// __TREE_1_H</span></span>
+</code></pre>
+  La complexité devra être O(N), où N est le nombre de noeuds de l'arbre (qui est égale à la taille du <tt>vector&lt;int&gt;</tt> donné en argument).
+    <br><br><b>Test</b>: <tt>make tree.1</tt>
+<!--    <pre>-->
+<!--    rm test.tar.gz; wget --no-cache <a href="test.tar.gz" download>http://fabien.viger.free.fr/oc/td3/test.tar.gz</a>-->
+<!--tar xf test.tar.gz-->
+<!--make tree.1</pre>-->
+    <br><br><b class="orange">RENDU</b>: <tt>tree.1.cc</tt>
+    <br><br>
+  </li>
+  <li>
+    <b>Implémentez</b> dans un fichier <tt>tree.2.cc</tt> la fonction <tt>Height()</tt> décrite dans le fichier <a href="http://fabien.viger.free.fr/oc/td3/tree.2.h" download="">tree.2.h</a>:
+    <pre><code class="c++ hljs cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">ifndef</span> __TREE_2_H</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> __TREE_2_H</span>
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+
+<span class="hljs-comment">// Entrée: un arbre, représenté par son tableau d'enfants (la sortie de la fonction</span>
+<span class="hljs-comment">// faite dans la question précédente), et un noeud X de cet arbre.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Sortie: la hauteur du sous-arbre de X: 0 si X n'a pas d'enfant, 1 si X n'a que des</span>
+<span class="hljs-comment">// enfants qui n'ont eux-mêmes pas d'enfants, etc.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Indice: la fonction pourra être récursive.</span>
+<span class="hljs-comment">// </span>
+<span class="hljs-comment">// Exemple:</span>
+<span class="hljs-comment">//    .3.     vector&lt;vector&lt;int&gt;&gt; enfants = [ [], [], [1], [2, 0, 4], [] ]</span>
+<span class="hljs-comment">//   .'|'.</span>
+<span class="hljs-comment">//  2  0  4   -&gt; Height(enfants, 0) = 0 ;   Height(enfants, 1) = 0</span>
+<span class="hljs-comment">//  |         -&gt; Height(enfants, 2) = 1 ;   Height(enfants, 3) = 2</span>
+<span class="hljs-comment">//  1         -&gt; Height(enfants, 4) = 0</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">Height</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt;&amp; enfants, <span class="hljs-keyword">int</span> node)</span></span>;
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">endif</span>  <span class="hljs-comment">// __TREE_2_H</span></span>
+</code></pre>
+    La complexité devra être O(taille du sous-arbre).
+    <br><br><b>Test</b>: <tt>make tree.2</tt>
+    <br><br><b class="orange">RENDU</b>: <tt>tree.2.cc</tt>
+    <br><br>
+  </li>
+  <li>
+    <b>Implémentez</b> dans un fichier <tt>tree.3.cc</tt> la fonction <tt>AllHeights()</tt> décrite dans le fichier <a href="http://fabien.viger.free.fr/oc/td3/tree.3.h" download="">tree.3.h</a>:
+    <pre><code class="c++ hljs cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">ifndef</span> __TREE_3_H</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> __TREE_3_H</span>
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+
+<span class="hljs-comment">// Entrée: un arbre, représenté par son tableau d'enfants (la sortie de la</span>
+<span class="hljs-comment">// fonction faite dans la question précédente).</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Sortie: les hauteurs de tous les noeuds de l'arbre (le tableau des valeurs</span>
+<span class="hljs-comment">// de Height(i) pour tous les noeuds i de 0 à N-1).</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Complexité: O(N).</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Indice: vous pourrez utiliser une fonction auxilliaire récursive, déclarée</span>
+<span class="hljs-comment">// et définie dans le .cc, qui ressemblera beaucoup à la Height() de la</span>
+<span class="hljs-comment">// question précédente, à la différence qu'elle utilisera la mémorisation.</span>
+<span class="hljs-comment">// </span>
+<span class="hljs-comment">// Exemple:</span>
+<span class="hljs-comment">//    .3.     vector&lt;vector&lt;int&gt;&gt; enfants = [ [], [], [1], [2, 0, 4], [] ]</span>
+<span class="hljs-comment">//  .' | '.</span>
+<span class="hljs-comment">//  2  0  4   -&gt; AllHeights(enfants) = [0, 0, 1, 2, 0]</span>
+<span class="hljs-comment">//  |</span>
+<span class="hljs-comment">//  1</span>
+<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; AllHeights(<span class="hljs-keyword">const</span> <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt;&amp; enfants);
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">endif</span>  <span class="hljs-comment">// __TREE_3_H</span></span>
+</code></pre>
+    La complexité devra être O(N), où N est le nombre de noeuds total.
+    <br><br><b>Test</b>: <tt>make tree.3</tt>
+    <br><br><b class="orange">RENDU</b>: <tt>tree.3.cc</tt>
+    <br><br>
+  </li>
+  <li>
+    <b>Implémentez</b> dans un fichier <tt>tree.4.cc</tt> la fonction <tt>AllSubtreeSizes()</tt> décrite dans le fichier <a href="http://fabien.viger.free.fr/oc/td3/tree.4.h" download="">tree.4.h</a>:
+    <pre><code class="c++ hljs cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">ifndef</span> __TREE_4_H</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> __TREE_4_H</span>
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+
+<span class="hljs-comment">// Exactement comme la question précédente, mais cette fois on calcule pour</span>
+<span class="hljs-comment">// chaque noeud i la taille de son sous-arbre (nombre de noeuds, i inclus, qui</span>
+<span class="hljs-comment">// sont descendants de i).</span>
+<span class="hljs-comment">// </span>
+<span class="hljs-comment">// Indices: le code ressemble beaucoup à la question précédente.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Exemple:</span>
+<span class="hljs-comment">//    .3.     vector&lt;vector&lt;int&gt;&gt; enfants = [ [], [], [1], [2, 0, 4], [] ]</span>
+<span class="hljs-comment">//  .' | '.</span>
+<span class="hljs-comment">//  2  0  4   -&gt; AllSubtreeSizes(enfants) = [1, 1, 2, 5, 1]</span>
+<span class="hljs-comment">//  |</span>
+<span class="hljs-comment">//  1</span>
+<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; AllSubtreeSizes(<span class="hljs-keyword">const</span> <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt;&amp; enfants);
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">endif</span>  <span class="hljs-comment">// __TREE_4_H</span></span>
+</code></pre>
+    La complexité devra être O(N), où N est le nombre de noeuds total.
+    <br><br><b>Test</b>: <tt>make tree.4</tt>
+    <br><br><b class="orange">RENDU</b>: <tt>tree.4.cc</tt>
+    <br><br>
+  </li>
+</ol>
+
+<hr>
+<h3>Exercice 2: DAG</h3>
+<ol>
+  <li>
+    <b>Implémentez</b> dans un fichier <tt>toposort.cc</tt> la fonction <tt>TopologicalSort()</tt> décrite dans le fichier <a href="http://fabien.viger.free.fr/oc/td3/toposort.h" download="">toposort.h</a>,
+    qui utilise la classe <tt>DirectedGraph</tt> vue en TD1 pour les graphes dirigés (une implémentation de référence est contenue dans l'archive <tt>test.tar.gz</tt>
+    et devrait donc se trouver dans votre repertoire de travail, mais vous pouvez aussi utiliser la vôtre si vous préférez, a condition qu'elle ait exactement
+    la même interface):
+    <pre><code class="c++ hljs cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">ifndef</span> __TOPOSORT_H</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> __TOPOSORT_H</span>
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> <span class="hljs-string">"graph.h"</span></span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+
+<span class="hljs-comment">// Fait le tri topologique du graphe dirigé donné en argument, et renvoie</span>
+<span class="hljs-comment">// les indices des noeuds triés selon l'ordre topologique: les "feuilles"</span>
+<span class="hljs-comment">// (noeuds n'ayant pas d'arcs sortant) seront plutot vers le début.</span>
+<span class="hljs-comment">// Si le graphe a un cycle (ce n'est donc pas un DAG, il n'y a donc pas</span>
+<span class="hljs-comment">// d'ordre topologique), la fonction devra renvoyer une tableau vide.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// A NOTER / INDICES:</span>
+<span class="hljs-comment">// - Plusieurs ordres topologiques différents existent souvent.</span>
+<span class="hljs-comment">// - Puisque le graphe vous donne la liste des enfants d'un noeud, et</span>
+<span class="hljs-comment">//   que vous auriez plutot besoin de la liste des parents pour faire un</span>
+<span class="hljs-comment">//   tri topologique comme demandé, vous avec 2 choix:</span>
+<span class="hljs-comment">//   a) précalculer la liste des parents de chaque noeuds</span>
+<span class="hljs-comment">//   b) faire le tri topologique inverse (ou on commencerai par les noeuds</span>
+<span class="hljs-comment">//      n'ayant pas de parents), puis inverser le resultat.</span>
+<span class="hljs-comment">// - On pourra pré-calculer le "degré résiduel" de chaque noeud (entrant ou</span>
+<span class="hljs-comment">//   sortant, selon que vous avez choisi a) ou b)), et initialiser une file</span>
+<span class="hljs-comment">//   FIFO (queue&lt;int&gt; par exemple) qui contiendra tous les noeuds de degré</span>
+<span class="hljs-comment">//   residuel zéro, mise à jour dynamiquement.</span>
+<span class="hljs-comment">// - La complexité devra être O(M) (nombre d'arcs).</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Exemple:</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// 2--&gt;5--&gt;6--&gt;7   Plusieurs ordres topologiques valides (liste non exhaustive):</span>
+<span class="hljs-comment">//     ^   |   |    - [4, 0, 7, 6, 5, 1, 2, 3]</span>
+<span class="hljs-comment">//     |   v   v    - [0, 4, 7, 6, 5, 2, 1, 3]</span>
+<span class="hljs-comment">// 3--&gt;1   0   4    - [4, 7, 0, 6, 5, 1, 3, 2]</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; TopologicalSort(<span class="hljs-keyword">const</span> DirectedGraph&amp; graph);
+
+<span class="hljs-preprocessor">#<span class="hljs-keyword">endif</span>  <span class="hljs-comment">// __TOPOSORT_H</span></span></code></pre>
+    <b>Test</b>: <tt>make toposort</tt>
+    <br><br><b class="orange">RENDU</b>: <tt>toposort.cc</tt>
+    <br><br>
+  </li>
+  <li>
+    <b>Implémentez</b> dans un fichier <tt>longest_path_dag.cc</tt> la fonction <tt>LongestPathInDag()</tt> écrite dans le fichier <a href="http://fabien.viger.free.fr/oc/td3/longest_path_dag.h" download="">longest_path_dag.h</a>:
+    <pre><code class="c++ hljs cpp"><span class="hljs-comment">// Entrée: un graphe dirigé et valué: on donne un poids positif à chaque</span>
+<span class="hljs-comment">// noeud dans le tableau "poids".</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Sortie: si le graphe est cyclique, renvoyez -1. Sinon, renvoyez la</span>
+<span class="hljs-comment">// somme des poids des noeuds sur le chemin le plus "lourd", i.e. le chemin</span>
+<span class="hljs-comment">// qui maximise la somme des poids de ses noeuds.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Indices: Si vous avez codé TopologicalSort(), vous pourrez l'utiliser pour</span>
+<span class="hljs-comment">// obtenir la réponse relativement facilement. Sinon, pensez à la</span>
+<span class="hljs-comment">// programmation dynamique!</span>
+<span class="hljs-comment">// Dans les 2 cas, il pourra être utile de créer un tableau qui stockera pour</span>
+<span class="hljs-comment">// chaque noeud i le poids du plus lourd chemin partant de i.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// Exemple (les poids des noeuds sont mis entre parenthèse)</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// 2(4)--&gt;5(5)--&gt;6(1)--&gt;7(2)     Le chemin le plus long/lourd est</span>
+<span class="hljs-comment">//        ^      |      ^        unique dans cet exemple: c'est</span>
+<span class="hljs-comment">//        |      v      |        2-&gt;5-&gt;6-&gt;0, qui a un poids total de 14.</span>
+<span class="hljs-comment">// 3(2)--&gt;1(1)   0(4)   4(11)</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">LongestPathInDag</span><span class="hljs-params">(<span class="hljs-keyword">const</span> DirectedGraph&amp; graph, <span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&amp; poids)</span></span>;</code></pre>
+    <b>Test</b>: <tt>make longest_path_dag</tt>
+    <br><br><b class="orange">RENDU</b>: <tt>longest_path_dag.cc</tt>
+    <br><br>
+  </li>
+</ol>
+
+<footer>
+N'oubliez pas de <a href="http://fabien.viger.free.fr/oc/rendu.html">soumettre votre travail</a>, <b classs="red">après l'avoir testé</b>.
+</footer>
+
+
+</body></html>
